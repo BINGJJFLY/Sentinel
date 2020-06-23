@@ -43,6 +43,7 @@ public class SpiLoaderTest {
     public void testLoadFirstInstance() {
         ProcessorSlot processorSlot = SpiLoader.loadFirstInstance(ProcessorSlot.class);
         assertNotNull(processorSlot);
+        System.out.println(processorSlot);
 
         ProcessorSlot processorSlot2 = SpiLoader.loadFirstInstance(ProcessorSlot.class);
         // As SERVICE_LOADER_MAP in SpiLoader cached the instance, so they're same instances
@@ -61,6 +62,7 @@ public class SpiLoaderTest {
     public void testLoadHighestPriorityInstance() {
         ProcessorSlot processorSlot = SpiLoader.loadHighestPriorityInstance(ProcessorSlot.class);
         assertNotNull(processorSlot);
+        System.out.println(processorSlot);
 
         // NodeSelectorSlot is highest order with @SpiOrder(-10000), among all slots
         assertTrue(processorSlot instanceof NodeSelectorSlot);

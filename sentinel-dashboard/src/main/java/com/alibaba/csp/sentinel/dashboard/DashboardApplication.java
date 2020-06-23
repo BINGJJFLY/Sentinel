@@ -29,6 +29,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class DashboardApplication {
 
     public static void main(String[] args) {
+        // TODO 触发一系列的初始化操作
         triggerSentinelInit();
         SpringApplication.run(DashboardApplication.class, args);
     }
