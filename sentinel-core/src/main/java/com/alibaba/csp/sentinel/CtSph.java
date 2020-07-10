@@ -133,7 +133,7 @@ public class CtSph implements Sph {
             return new CtEntry(resourceWrapper, null, context);
         }
 
-        // 获取该资源对应的SlotChain
+        // 获取该资源对应的SlotChain，一个资源对应一个SlotChain
         ProcessorSlot<Object> chain = lookProcessChain(resourceWrapper);
 
         /*
@@ -143,7 +143,8 @@ public class CtSph implements Sph {
         if (chain == null) {
             return new CtEntry(resourceWrapper, null, context);
         }
-
+        // CtEntry的parent设置child、context设置curEntry为当前CtEntry对象
+        // 一次请求对应一个CtEntry
         Entry e = new CtEntry(resourceWrapper, chain, context);
         try {
             // 执行Slot的entry方法

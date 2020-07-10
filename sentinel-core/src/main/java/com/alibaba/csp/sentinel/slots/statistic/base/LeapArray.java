@@ -116,8 +116,10 @@ public abstract class LeapArray<T> {
             return null;
         }
 
+        // 通过当前时间计算下标，即通过当前时间判断属于哪个窗口
+        // 范围：0~sampleCount-1
         int idx = calculateTimeIdx(timeMillis);
-        // Calculate current bucket start time.
+        // 计算当前窗口的开始时间
         long windowStart = calculateWindowStart(timeMillis);
 
         /*
@@ -128,6 +130,7 @@ public abstract class LeapArray<T> {
          * (3) Bucket is deprecated, then reset current bucket and clean all deprecated buckets.
          */
         while (true) {
+            // 获取当前时间对应的窗口
             WindowWrap<T> old = array.get(idx);
             if (old == null) {
                 /*
@@ -142,12 +145,14 @@ public abstract class LeapArray<T> {
                  * then try to update circular array via a CAS operation. Only one thread can
                  * succeed to update, while other threads yield its time slice.
                  */
+                // 如果为空，则表示还未进行初始化，创建一个窗口对象放入执行位置
                 WindowWrap<T> window = new WindowWrap<T>(windowLengthInMs, windowStart, newEmptyBucket(timeMillis));
                 if (array.compareAndSet(idx, null, window)) {
                     // Successfully updated, return the created bucket.
                     return window;
                 } else {
                     // Contention failed, the thread will yield its time slice to wait for bucket available.
+                    // 更新失败，代表有别的线程在处理，让出CPU时间重新执行循环流程
                     Thread.yield();
                 }
             } else if (windowStart == old.windowStart()) {
@@ -162,6 +167,8 @@ public abstract class LeapArray<T> {
                  * If current {@code windowStart} is equal to the start timestamp of old bucket,
                  * that means the time is within the bucket, so directly return the bucket.
                  */
+                // 如果对应时间窗口的开始时间与计算得到的开始时间一样
+                // 那么代表当前即是我们要找的窗口对象，直接返回
                 return old;
             } else if (windowStart > old.windowStart()) {
                 /*
@@ -181,9 +188,12 @@ public abstract class LeapArray<T> {
                  * The update lock is conditional (tiny scope) and will take effect only when
                  * bucket is deprecated, so in most cases it won't lead to performance loss.
                  */
+                // 如果数组中的小窗口对象的开始时间比计算得到的小
+                // 代表当前时间窗口已经落后了，需要更新
                 if (updateLock.tryLock()) {
                     try {
                         // Successfully get the update lock, now we reset the bucket.
+                        // 更新当前时间窗口
                         return resetWindowTo(old, windowStart);
                     } finally {
                         updateLock.unlock();
@@ -194,6 +204,8 @@ public abstract class LeapArray<T> {
                 }
             } else if (windowStart < old.windowStart()) {
                 // Should not go through here, as the provided time is already behind.
+                // 如果数组中的窗口对象的开始时间比计算得到的大
+                // 可能机器的时间不对，例如时钟回拨，属于异常情况，可以无视
                 return new WindowWrap<T>(windowLengthInMs, windowStart, newEmptyBucket(timeMillis));
             }
         }

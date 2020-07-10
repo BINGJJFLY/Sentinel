@@ -37,7 +37,7 @@ public class NacosDataSourceDemo {
 
     private static final String KEY = "TestResource";
     // nacos server ip
-    private static final String remoteAddress = "192.168.88.128";
+    private static final String remoteAddress = "192.168.88.128:8848";
     // nacos group
     private static final String groupId = "Sentinel:Demo";
     // nacos dataId

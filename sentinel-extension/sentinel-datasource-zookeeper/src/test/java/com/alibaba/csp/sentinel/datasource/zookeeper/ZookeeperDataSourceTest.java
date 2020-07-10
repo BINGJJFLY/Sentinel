@@ -38,10 +38,11 @@ public class ZookeeperDataSourceTest {
 
     @Test
     public void testZooKeeperDataSource() throws Exception {
-        TestingServer server = new TestingServer(21812);
-        server.start();
+//        TestingServer server = new TestingServer(21812);
+//        server.start();
 
-        final String remoteAddress = server.getConnectString();
+//        final String remoteAddress = server.getConnectString();
+        final String remoteAddress = "192.168.88.128:2181";
         final String path = "/sentinel-zk-ds-demo/flow-HK";
 
         ReadableDataSource<String, List<FlowRule>> flowRuleDataSource = new ZookeeperDataSource<List<FlowRule>>(remoteAddress, path,
@@ -67,7 +68,7 @@ public class ZookeeperDataSourceTest {
         publishThenTestFor(zkClient, path, resourceName, 15);
 
         zkClient.close();
-        server.stop();
+//        server.stop();
     }
 
 

@@ -69,11 +69,16 @@ public class StandaloneRedisDataSourceTest {
             e.printStackTrace();
         }
         Converter<String, List<FlowRule>> flowConfigParser = buildFlowConfigParser();
-        client = RedisClient.create(RedisURI.create(server.getHost(), server.getBindPort()));
+//        client = RedisClient.create(RedisURI.create(server.getHost(), server.getBindPort()));
+//        RedisConnectionConfig config = RedisConnectionConfig.builder()
+//            .withHost(server.getHost())
+//            .withPort(server.getBindPort())
+//            .build();
+        client = RedisClient.create(RedisURI.create("192.168.88.128", 6379));
         RedisConnectionConfig config = RedisConnectionConfig.builder()
-            .withHost(server.getHost())
-            .withPort(server.getBindPort())
-            .build();
+                .withHost("192.168.88.128")
+                .withPort(6379)
+                .build();
         initRedisRuleData();
         ReadableDataSource<String, List<FlowRule>> redisDataSource = new RedisDataSource<List<FlowRule>>(config,
             ruleKey, channel, flowConfigParser);
@@ -87,7 +92,7 @@ public class StandaloneRedisDataSourceTest {
         int maxQueueingTimeMs = new Random().nextInt();
         StatefulRedisPubSubConnection<String, String> connection = client.connectPubSub();
         String flowRules =
-            "[{\"resource\":\"test\", \"limitApp\":\"default\", \"grade\":1, \"count\":\"0.0\", \"strategy\":0, "
+            "[{\"resource\":\"sphu\", \"limitApp\":\"default\", \"grade\":1, \"count\":\"2\", \"strategy\":0, "
                 + "\"refResource\":null, "
                 +
                 "\"controlBehavior\":0, \"warmUpPeriodSec\":10, \"maxQueueingTimeMs\":" + maxQueueingTimeMs
@@ -118,9 +123,10 @@ public class StandaloneRedisDataSourceTest {
     public void testInitAndParseFlowRuleSuccess() {
         RedisCommands<String, String> stringRedisCommands = client.connect().sync();
         String value = stringRedisCommands.get(ruleKey);
+        System.out.println(value);
         List<FlowRule> flowRules = buildFlowConfigParser().convert(value);
         Assert.assertEquals(flowRules.size(), 1);
-        stringRedisCommands.del(ruleKey);
+//        stringRedisCommands.del(ruleKey);
     }
 
     @Test
@@ -134,7 +140,7 @@ public class StandaloneRedisDataSourceTest {
     @After
     public void clearResource() {
         RedisCommands<String, String> stringRedisCommands = client.connect().sync();
-        stringRedisCommands.del(ruleKey);
+//        stringRedisCommands.del(ruleKey);
         client.shutdown();
         server.stop();
         server = null;
@@ -146,7 +152,7 @@ public class StandaloneRedisDataSourceTest {
 
     private void initRedisRuleData() {
         String flowRulesJson =
-            "[{\"resource\":\"test\", \"limitApp\":\"default\", \"grade\":1, \"count\":\"0.0\", \"strategy\":0, "
+            "[{\"resource\":\"sphu\", \"limitApp\":\"default\", \"grade\":1, \"count\":\"1\", \"strategy\":0, "
                 + "\"refResource\":null, "
                 +
                 "\"controlBehavior\":0, \"warmUpPeriodSec\":10, \"maxQueueingTimeMs\":500, \"controller\":null}]";

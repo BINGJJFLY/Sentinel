@@ -41,5 +41,9 @@ public class NacosConfigSender {
             + "]";
         ConfigService configService = NacosFactory.createConfigService(remoteAddress);
         System.out.println(configService.publishConfig(dataId, groupId, rule));
+
+//        configService.removeConfig(dataId, groupId);
+        String config = configService.getConfig(dataId, groupId, 5000);
+        System.out.println(config);
     }
 }

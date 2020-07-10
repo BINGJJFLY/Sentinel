@@ -26,7 +26,7 @@ public class ZookeeperDataSourceDemo {
 
     private static void loadRules() {
 
-        final String remoteAddress = "127.0.0.1:2181";
+        final String remoteAddress = "192.168.88.128:2181";
         final String path = "/Sentinel-Demo/SYSTEM-CODE-DEMO-FLOW";
 
         ReadableDataSource<String, List<FlowRule>> flowRuleDataSource = new ZookeeperDataSource<>(remoteAddress, path,

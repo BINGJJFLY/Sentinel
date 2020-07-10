@@ -17,14 +17,34 @@ package com.alibaba.csp.sentinel.demo.slot;
 
 import com.alibaba.csp.sentinel.Entry;
 import com.alibaba.csp.sentinel.SphU;
+import com.alibaba.csp.sentinel.context.ContextUtil;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
+import com.alibaba.csp.sentinel.slots.block.RuleConstant;
+import com.alibaba.csp.sentinel.slots.block.flow.FlowRule;
+import com.alibaba.csp.sentinel.slots.block.flow.FlowRuleManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Eric Zhao
  */
 public class SlotChainBuilderSpiDemo {
 
-    public static void main(String[] args) {
+    private static void initFlowQpsRule() {
+        List<FlowRule> rules = new ArrayList<FlowRule>();
+        FlowRule rule1 = new FlowRule();
+        rule1.setResource("abc");
+        // set limit qps to 20
+        rule1.setCount(20);
+        rule1.setGrade(RuleConstant.FLOW_GRADE_QPS);
+        rule1.setLimitApp("default");
+        rules.add(rule1);
+        FlowRuleManager.loadRules(rules);
+    }
+
+    public static void main(String[] args) throws BlockException {
+        initFlowQpsRule();
         // You will see this in record.log, indicating that the custom slot chain builder is activated:
         // [SlotChainProvider] Global slot chain builder resolved: com.alibaba.csp.sentinel.demo.slot.DemoSlotChainBuilder
         Entry entry = null;
@@ -37,5 +57,25 @@ public class SlotChainBuilderSpiDemo {
                 entry.exit();
             }
         }
+
+        /*ContextUtil.enter("contextName1");
+        Entry entry1 = null;
+        try {
+            entry1 = SphU.entry("resourceName1");
+            System.out.println("run method 1");
+            Entry entry2 = null;
+            try {
+                entry2 = SphU.entry("resourceName1");
+                System.out.println("run method 1");
+            }finally {
+                if (entry2 != null) {
+                    entry2.exit();
+                }
+            }
+        } finally {
+            if (entry1 != null) {
+                entry1.exit();
+            }
+        }*/
     }
 }

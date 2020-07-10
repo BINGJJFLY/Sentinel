@@ -53,7 +53,7 @@ public class WebMvcTestController {
      */
     @GetMapping("/sphu")
     public String sphu_try_with_resources() {
-        initFlowRules("sphu");
+//        initFlowRules("sphu");
         try (Entry entry = SphU.entry("sphu")) {
             // 被保护的逻辑
             doBusiness();

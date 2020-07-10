@@ -115,6 +115,8 @@ public class SimpleHttpCommandCenter implements CommandCenter {
                 }
 
                 TransportConfig.setRuntimePort(port);
+                // 此时，则不能再往线程池中添加任何任务，否则将会抛出RejectedExecutionException异常
+                // 但是，此时线程池不会立刻退出，直到添加到线程池中的任务都已经处理完成，才会退出
                 executor.shutdown();
             }
 

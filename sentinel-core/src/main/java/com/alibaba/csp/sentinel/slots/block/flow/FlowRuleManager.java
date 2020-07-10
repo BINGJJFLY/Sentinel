@@ -56,7 +56,9 @@ public class FlowRuleManager {
         new NamedThreadFactory("sentinel-metrics-record-task", true));
 
     static {
+        // TODO FlowPropertyListener将List<FlowRule>转称Map<String, List<FlowRule>>
         currentProperty.addListener(LISTENER);
+        // TODO 开启周期线程
         SCHEDULER.scheduleAtFixedRate(new MetricTimerListener(), 0, 1, TimeUnit.SECONDS);
     }
 
