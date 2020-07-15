@@ -60,6 +60,7 @@ public class TokenServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     @SuppressWarnings("unchecked")
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        System.out.println("request................................");
         globalConnectionPool.refreshLastReadTime(ctx.channel());
         if (msg instanceof ClusterRequest) {
             ClusterRequest request = (ClusterRequest)msg;
